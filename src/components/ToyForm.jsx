@@ -1,6 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 
-function ToyForm() {
+function ToyForm({ onAddToy }) {
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("");
+
+  function handleSubmit() {
+    fetch("http://localhost:3001/toys", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, image, likes: 0 }),
+    })
+      .then((res) => res.json())
+      .then((newToy) => {
+        onAddToy(newToy);
+        setName("");
+        setImage("");
+      });
+  }
+
   return (
     <div className="container">
       <form className="add-toy-form">
@@ -10,6 +27,8 @@ function ToyForm() {
           name="name"
           placeholder="Enter a toy's name..."
           className="input-text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <br />
         <input
@@ -17,14 +36,13 @@ function ToyForm() {
           name="image"
           placeholder="Enter a toy's image URL..."
           className="input-text"
+          value={image}
+          onChange={(e) => setImage(e.target.value)}
         />
         <br />
-        <input
-          type="submit"
-          name="submit"
-          value="Create New Toy"
-          className="submit"
-        />
+        <button type="button" className="submit" onClick={handleSubmit}>
+          Create New Toy
+        </button>
       </form>
     </div>
   );
